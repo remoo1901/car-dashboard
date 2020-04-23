@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Dashboard.scss";
 import { server } from "./../../axios";
 import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
   const [cars, setCars] = useState([]);
@@ -13,9 +14,23 @@ function Dashboard() {
       .catch((err) => console.log(err));
   }, []);
 
+  const handleDelete = (id) => {
+    server
+      .delete(`/cars/${id}`)
+      .then((res) => console.log(res))
+      .then(() => {
+        const filtered = cars.filter((car) => {
+          return car._id != id;
+        });
+        setCars(filtered);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div>
       <h1>Dashoard</h1>
+      <Link to="/add">Add Car</Link>
       <button
         onClick={() => {
           localStorage.clear();
@@ -27,7 +42,7 @@ function Dashboard() {
       <div className="information">
         <p>Number of Cars in Inventory:{cars.length}</p>
         <p>
-          MSRP of Inventory: ${" "}
+          MSRP of Inventory: $
           {cars
             .reduce((accumulator, item) => {
               return (accumulator = accumulator + Number(item.price));
@@ -38,9 +53,10 @@ function Dashboard() {
       <div className="currentInventory">
         {cars.map((car) => {
           return (
-            <p>
-              {car.year},{car.make}, {car.model}, {car.miles}, {car.color},{" "}
-              {car.vin} <button>Delete</button>
+            <p key={car.id}>
+              {car.year},{car.make}, {car.model}, {car.miles} Miles, {car.color}
+              ,{car.vin} 
+              <button onClick={() =>handleDelete(car._id)}>Delete</button>
               <button>Edit</button>
             </p>
           );
