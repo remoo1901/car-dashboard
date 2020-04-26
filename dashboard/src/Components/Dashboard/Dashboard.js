@@ -20,7 +20,7 @@ function Dashboard() {
       .then((res) => console.log(res))
       .then(() => {
         const filtered = cars.filter((car) => {
-          return car._id != id;
+          return car._id !== id;
         });
         setCars(filtered);
       })
